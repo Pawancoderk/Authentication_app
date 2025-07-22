@@ -2,6 +2,7 @@ import express from "express"
 import dotenv from 'dotenv'
 import cors from "cors"
 import dbConnect from "./utils/db.js"
+import userRouter from "./routes/user.routes.js"
 
 dotenv.config()
 
@@ -22,7 +23,9 @@ app.get("/",(req,res)=>{
     res.send("hello")
 })
 
-dbConnect( )
+dbConnect()
+
+app.use("/api/v1/users",userRouter)
 
 app.listen(process.env.PORT,()=>{
     console.log(`App listening on port ${process.env.PORT}`)
