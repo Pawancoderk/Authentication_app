@@ -1,32 +1,35 @@
-import express from "express"
-import dotenv from 'dotenv'
-import cors from "cors"
-import dbConnect from "./utils/db.js"
-import userRouter from "./routes/user.routes.js"
+import express from "express";
+import dotenv from 'dotenv';
+import cors from "cors";
+import dbConnect from "./utils/db.js";
+import userRouter from "./routes/user.routes.js";
 
-dotenv.config()
+
+dotenv.config();
 
 const app = express();
 
 app.use(cors({
-    origin: process.env.BASE_URL,
-    methods: ["POST","GET","DELETE","PUT"],
-    allowedHeaders: ["Content-Type","Authorization"],
-    credentials: true
-}))
+  origin: process.env.BASE_URL,
+  methods: ["POST", "GET", "DELETE", "PUT"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
 
-app.use(express.json())
-app.use(express.urlencoded({extended:true}))
-const port = process.env.PORT || 4000
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/",(req,res)=>{
-    res.send("hello")
-})
+const port = process.env.PORT || 4000;
 
-dbConnect()
+app.get("/", (req, res) => {
+  res.send("hello");
+});
 
-app.use("/api/v1/users",userRouter)
+dbConnect();
 
-app.listen(process.env.PORT,()=>{
-    console.log(`App listening on port ${process.env.PORT}`)
-})
+app.use("/api/v1/users", userRouter);
+
+
+app.listen(port, () => {
+  console.log(`App listening on port ${port}`);
+});

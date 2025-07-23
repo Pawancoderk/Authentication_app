@@ -5,17 +5,23 @@ const userScheam = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        lowercase: true
+        
     },
     email:{
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        // validate:{
+        //     validater: function(value){
+        //         return value.includes("@")
+        //     },
+        //     message: "Email must contain @"
+        // }
     },
     password:{
         type: String,
         required: true,
-        minlength: 6
+        minlength: [6, "Password must be at least 6 characters "]
     },
     role:{
         type: String,
