@@ -1,8 +1,9 @@
 
 import User from "../models/User.model.js"
 import crypto from "crypto"
-import { Resend } from "resend";
+import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer"
+import jwt from "jsonwebtoken";
 import { use } from "react";
 const registerUser = async (req, res) => {
 
@@ -121,4 +122,60 @@ const verifyUser = async (req, res) => {
 
 }
 
-export { registerUser, verifyUser }
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body
+
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "All fields are required",
+        status: 400
+      })
+    }
+
+    const user = await User.findOne({ email })
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid username or password",
+        status: 400
+      })
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log(isMatch)
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Incorrect password",
+        status: 400
+      })
+    }
+
+    const token = jwt.sign(
+      {id: user._id},
+      "shhh",
+      {expiresIn:"24h" }
+    )
+
+    const cookieOptions = {
+      httpOnly:true,
+      secure: true,
+      maxAge: 24*60*60*1000
+    }
+    res.cookie("token",token,cookieOptions)
+    res.status(200).json({
+      message: "Login Successfully",
+      status: true,
+      token,
+      user:{
+        id: user._id,
+        name: user.name
+      }
+    })
+  } catch (error) {
+    console.error("Login error",error)
+    res.status(400).json({
+      message: "Login error"
+    })
+  }
+}
+
+export { registerUser, verifyUser, login }
